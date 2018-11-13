@@ -1,0 +1,174 @@
+{% extends "base_app/base.html" %}
+
+{% block main_title %}
+{% load static %}
+  {% for restaurant in selected_restaurant %}
+    <div class="main_title">{{ restaurant.name }}</div>
+  {% endfor %}
+{% endblock %}
+
+{% block head_right4 %}
+{% load static %}
+<div class="all_comments" id="head_right3">
+  <a href="{% url "base_app:all_comments" %}">
+    <img src="{% static 'base_app/images/comments.png' %}" height="25">
+  </a>
+</div>
+{% endblock %}
+
+{% block head_right23 %}
+<div class="all_restaurants" id="head_right2">
+  <a href="{% url "base_app:base" %}">
+    <img src="{% static 'base_app/images/restaurants.png' %}" height="25">
+  </a>
+</div>
+<div class="map" id="head_right1">
+  <img src="{% static 'base_app/images/map.png' %}" height="25">
+</div>
+{% endblock %}
+
+{% block head_right1 %}
+{% endblock %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'base_app/css/restaurant.css' %}">
+<div class="comment_list">
+  {% for restaurant in selected_restaurant %}
+    <div class="restaurant_set {{ restaurant.category }}">
+      <div class="restaurant_image"></div>
+      <div class="restaurant_content">
+        <div class="restaurant_content_left">
+          <div class="restaurant_name">{{ restaurant }}</div>
+          <div class="restaurant_info">010-0000-0000<br>0요일 오후 0시 ~ 오후 0시</div>
+          <div class="restaurant_star">
+            <b>{{ restaurant.average_star }}</b><span class="comment_count"> {{ restaurant.comment_count }}</span>
+            <span>맛 {{ restaurant.taste_star }}  가격 {{ restaurant.price_star }}  청결 {{ restaurant.clean_star }}</span>
+          </div>
+        </div>
+        <div class="restaurant_content_right">
+          <div><span>혼밥 </span><span>{% if restaurant.is_card_possible %}{{ restaurant.is_card_possible }}{% else %}-{% endif %}</span></div>
+          <div><span>포장 </span><span>{% if restaurant.is_package_possible %}{{ restaurant.is_package_possible }}{% else %}-{% endif %}</span></div>
+          <div><span>배달 </span><span>{% if restaurant.is_delivery_possible %}{{ restaurant.is_delivery_possible }}{% else %}-{% endif %}</span></div>
+        </div>
+      </div>
+      <div class="comments">메<br>뉴<br>보<br>기</div>
+    </div>
+  {% endfor %}
+  {% for comment in comments %}
+    <div class="comment">
+      <!--writer-->
+      <div class="profile_set">
+      {% if comment.author.is_superuser or comment.author.is_staff %}
+        <div class="profile_image"><img src="{% static 'base_app/images/profile1.png' %}" width="35"></div>
+        <div class="profile_content">
+          <div class="profile_nickname" style="color: rgb(255,129,129)">{{ comment.author.last_name }}</div>
+          <div class="upload_time">
+            <span>{{ comment.created_at|date:"y/m/d" }}</span>
+            <span>{{ comment.created_at|time:"H:i" }}</span>
+          </div>
+        </div>
+        <div class="comment_restaurant">
+          <a href="{% url "base_app:restaurant" pk=comment.restaurant.pk %}"># <span>{{ comment.restaurant }}</span></a>
+          {% if comment.dish_eaten %}
+          <a  href="#"><{{ comment.dish_eaten }}></a>
+          {% endif %}
+        </div>
+      {% else %}
+        <div class="profile_image"><img src="{% static 'base_app/images/profile2.png' %}" width="35"></div>
+        <div class="profile_content">
+          <div class="profile_nickname" style="color: rgb(129,129,255)">{{ comment.author.last_name }}</div>
+          <div class="upload_time">
+            <span>{{ comment.created_at|date:"y/m/d" }}</span>
+            <span>{{ comment.created_at|time:"H:i" }}</span>
+          </div>
+        </div>
+        <div class="comment_restaurant">
+          <a href="{% url "base_app:restaurant" pk=comment.restaurant.pk %}"># <span>{{ comment.restaurant }}</span></a>
+          {% if comment.dish_eaten %}
+          <a  href="#"><{{ comment.dish_eaten }}></a>
+          {% endif %}
+        </div>
+      {% endif %}
+      </div>
+
+      <!--comment-->
+      <div class="comment_set">
+        <div class="comment_content">{{ comment.content }}</div>
+        <div class="grade_set">
+          <span class="taste"><b>맛</b><span> {{ comment.taste_grade }}</span></span>
+          <span class="cost"><b>가격</b><span> {{ comment.price_grade }}</span></span>
+          <span class="clean"><b>청결</b><span> {{ comment.clean_grade }}</span></span>
+          <span class="like"><span><img src="{% static 'base_app/images/like.png' %}" width="12"></span><span> 0</span></span>
+          <span class="dislike"><span><img src="{% static 'base_app/images/dislike.png' %}" width="12"></span><span> 0</span></span>
+        </div>
+        <div class="comment_images">
+          {% if comment.food_image %}
+          <img class="comment_image" src="{{ comment.food_image.url }}">
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
+
+{% block footer %}
+<a href="{% url "base_app:all_comments" %}"><img src="{% static 'base_app/images/comment1.png' %}" width="26"></a>
+<a href="{% url "base_app:base" %}"><img src="{% static 'base_app/images/restaurant2.png' %}" width="27"></a>
+{% if user.is_authenticated %}
+  {% for restaurant in selected_restaurant %}
+  <a href="{% url "base_app:write_comment" pk=restaurant.pk %}"><img src="{% static 'base_app/images/write1.png' %}" width="27"></a>
+  {% endfor %}
+{% else %}
+  <a href="{% url "accounts:login" %}"><img src="{% static 'base_app/images/write1.png' %}" width="27"></a>
+{% endif %}
+<a href="#"><img src="{% static 'base_app/images/gear1.png' %}" width="27"></a>
+{% endblock %}
+
+{% block start_html %}
+{% endblock %}
+{% block start_js %}
+{% endblock %}
+
+<!--map 설정-->
+{% block mapZoom %}
+  {% for restaurant in selected_restaurant %}
+    center: {{ restaurant.locate }},
+  {% endfor %}
+  zoom: 19,
+{% endblock %}
+
+{% block newMarker %}
+      // 해당 restaurant 소개 바로 뜨게
+  {% for restaurant in selected_restaurant %}
+      var selectedMarker = new google.maps.Marker({
+          position: {{ restaurant.locate }},
+          map: map,
+          zIndex: 19980206,
+          label: {
+              text: "★",
+              fontSize: '12px',
+              fontWeight: '900',
+              color: 'rgb(255,129,129)',
+          },
+          icon: image1,
+      });
+
+      // 클릭 시 restaurant 소개 & 센터 오게
+      var restaurant_introduction =
+          '    <div style="display: flex; align-items: center; justify-content: space-between; width: 160px; height: 40px; margin-top: 5px; text-align: left; font-weight: 900">\n' +
+          '      <div>{{ restaurant }}<span style="color: rgb(255,192,0)">({{ restaurant.average_star }})</span></div>\n' +
+          '      <a href="{% url "base_app:restaurant" pk=restaurant.pk %}" style="all: unset; text-decoration: underline black">후기 / 정보</a>\n' +
+          '    </div>';
+      var infowindow = new google.maps.InfoWindow({
+          content: restaurant_introduction
+      });
+
+      selectedMarker.addListener('click', function() {
+          map.setZoom(21);
+          map.panTo(this.getPosition());
+          infowindow.open(map, selectedMarker);
+      });
+  {% endfor %}
+{% endblock %}

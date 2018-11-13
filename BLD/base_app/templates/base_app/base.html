@@ -1,0 +1,529 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>bld | 서울시립대 음식점</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'base_app/css/base.css' %}">
+  <link href="https://fonts.googleapis.com/css?family=Nanum+Gothic" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{% static 'base_app/css/swiper.min.css' %}">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+</head>
+<body>
+
+<!--시작 시 로고 띄우기-->
+{% block start_html %}
+<div class="bld">
+  <img style="margin: 0 0 20px 5px" src="{% static 'base_app/images/logo.png' %}" width="150px">
+</div>
+{% endblock %}
+
+<!-- Swiper -->
+<div class="swiper-container">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide menu">
+
+{#          <!--plus-->#}
+{#      <div style="display: none;" class="black_block3"></div>#}
+{#      <div id="plus"><img src="{% static 'base_app/images/plus.png' %}" width="50"></div>#}
+{#      <div class="plus plus1">#}
+{#        <a href="#"><img src="{% static 'base_app/images/write.png' %}" width="50"></a>#}
+{#      </div>#}
+{#      <div class="plus plus1 message1">후기 작성</div>#}
+{#      <div class="plus plus2">#}
+{#        <img src="{% static 'base_app/images/police.png' %}" width="50">#}
+{#      </div>#}
+{#      <div class="plus plus2 message2">신고(예정)</div>#}
+
+
+      <div class="content_head">
+        <div class="head_left">
+          {% block head_left %}
+          {% if search_term %}
+            <div class="main_menu">‘{{ search_term }}’ <span>의 검색 결과</span></div>
+          {% elif sort_term %}
+            <div class="main_menu">분류 결과</div>
+          {% else %}
+            <div class="main_menu">식당</div>
+          {% endif %}
+          {% endblock %}
+        </div>
+        <div class="head_right">
+          {% block head_right23 %}
+          <div class="map" id="head_right3">
+            <img src="{% static 'base_app/images/map.png' %}" height="22">
+          </div>
+          <div class="filter" id="head_right2">
+            <img src="{% static 'base_app/images/filter.png' %}" height="19">
+          </div>
+          {% endblock %}
+          {% block head_right1 %}
+          <div class="search" id="head_right1">
+            <img src="{% static 'base_app/images/searching.png' %}" height="20">
+          </div>
+          {% endblock %}
+        </div>
+        <div style="display: none" class="search_input">
+          <form method="get" action="" id="search_submit">
+            {% block search %}
+            <input class="search_text" type="text" name="search" placeholder="(식당) 검색어를 입력해주세요" required>
+            {% endblock %}
+          </form>
+        </div>
+      </div>
+      <div style="display: none" class="black_block"></div>
+      <div style="display: none" class="main_menu_bar">
+        <div class="logo"><img src="{% static 'base_app/images/logo.png' %}" width="100"></div>
+        <div class="notice">
+          <div>ver 1.0</div>
+          <div>공지(예정)</div>
+        </div>
+        <div class="log">
+          {% if not user.is_authenticated %}
+            <div><a href="{% url "accounts:login" %}">로그인</a></div>
+            <div><a href="{% url "accounts:signup" %}">회원가입</a></div>
+          {% else %}
+            <div>
+              <form id="logout" action="{% url "accounts:logout" %}" method="POST">
+                {% csrf_token %}
+                <div class="logout">로그아웃</div>
+              </form>
+            </div>
+            <div>먹킷리스트(예정)</div>
+          {% endif %}
+        </div>
+      </div>
+      <div style="display: none" class="white_block"></div>
+
+      <!--mid-->
+      <div class="content_mid">
+        <div class="main_page">
+            <!--filter-->
+          <div style="display: none" class="filter_page">
+            <form method="get" action="" id="filter_submit">
+              <div class="filter_sort">
+                <div class="filter_sort_title">정렬</div>
+                <div class="filter_sort_content">
+                  <div class="sort" id="sort1">평점순</div>
+                  <div class="sort" id="sort2">인기순</div>
+                  <div class="sort" id="sort3">등록순</div>
+                </div>
+              </div>
+              <div class="filter_category">
+                <div class="filter_category_title">종류</div>
+                <div class="filter_category_content">
+                  {% for category in categorys %}
+                    <div class="category" id="category{{ category.pk }}">
+                      <div>{{ category }}</div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+              <div id="filter_submit_btn">필터 적용</div>
+              <input type="hidden" id="value1" name="sort">
+              <input type="hidden" id="value2" name="category">
+            </form>
+          </div>
+          <div style="display: none" class="black_block2"></div>
+
+            <!--restaurants-->
+          {% block content %}
+          <div class="content_list restaurants">
+            {% for restaurant in restaurants %}
+              <div class="restaurant_set {{ restaurant.category }}">
+                <div class="restaurant_image"></div>
+                <div class="restaurant_content">
+                  <div class="restaurant_content_left">
+                    <div class="restaurant_name">{{ restaurant.number }}. {{ restaurant }}</div>
+                    <div class="restaurant_info">010-0000-0000<br>0요일 오후 0시 ~ 오후 0시</div>
+                    <div class="restaurant_star">
+                      <b>{{ restaurant.average_star }}</b><span class="comment_count"> {{ restaurant.comment_count }}</span>
+                      <span>맛 {{ restaurant.taste_star }}  가격 {{ restaurant.price_star }}  청결 {{ restaurant.clean_star }}</span>
+                    </div>
+                  </div>
+                  <div class="restaurant_content_right">
+                    <div><span>카드 </span><span>{% if restaurant.is_card_possible %}{{ restaurant.is_card_possible }}{% else %}-{% endif %}</span></div>
+                    <div><span>포장 </span><span>{% if restaurant.is_package_possible %}{{ restaurant.is_package_possible }}{% else %}-{% endif %}</span></div>
+                    <div><span>배달 </span><span>{% if restaurant.is_delivery_possible %}{{ restaurant.is_delivery_possible }}{% else %}-{% endif %}</span></div>
+                  </div>
+                </div>
+                <a href="{% url "base_app:restaurant" pk=restaurant.pk %}"><div class="comments">후<br>기<br>보<br>기</div></a>
+              </div>
+            {% endfor %}
+          </div>
+          {% endblock %}
+        </div>
+      </div>
+      <div class="content_footer">
+        {% block footer %}
+        <a href="{% url "base_app:all_comments" %}"><img src="{% static 'base_app/images/comment1.png' %}" width="26"></a>
+        <a href="#"><img src="{% static 'base_app/images/restaurant2.png' %}" width="27"></a>
+        {% if user.is_authenticated %}
+          <a href="{% url "base_app:write_comment" pk=1 %}"><img src="{% static 'base_app/images/write1.png' %}" width="27"></a>
+        {% else %}
+          <a href="{% url "accounts:login" %}"><img src="{% static 'base_app/images/write1.png' %}" width="27"></a>
+        {% endif %}
+        <a href="#"><img src="{% static 'base_app/images/gear1.png' %}" width="27"></a>
+        {% endblock %}
+      </div>
+    </div>
+
+    <div class="swiper-slide content">
+      <div class="map">
+        <!--map-->
+        <div id="map"></div>
+      </div>
+      <div style="display: none" class="menu-button cross">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!--jquery-->
+<script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
+
+  <!-- Swiper JS -->
+{#<script src='../../static/base_app/js/swiper.min.js'></script>#}
+<script src="{% static 'base_app/js/swiper.min.js' %}"></script>
+
+<!-- Initialize Swiper -->
+<script>
+  var menuButton = document.querySelector('.menu-button');
+  var map = document.querySelector('.map');
+  var swiper = new Swiper('.swiper-container', {
+    slidesPerView: 'auto',
+    initialSlide: 0,
+    resistanceRatio: 0,
+    slideToClickedSlide: false,
+    allowTouchMove: false,
+    on: {
+      init: function () {
+        var slider = this;
+        menuButton.addEventListener('click', function () {
+          if (slider.activeIndex === 0) {
+            slider.slideNext();
+          } else {
+            slider.slidePrev();
+            $('.menu-button').hide();
+            $('#map').css('width', 'calc(100% - 320px)')
+          }
+        }, true);
+
+        map.addEventListener('click', function () {
+          if (slider.activeIndex === 0) {
+            slider.slideNext();
+            $('.menu-button').show();
+            $('#map').css('width', '100%')
+          } else {
+            slider.slidePrev();
+          }
+        }, true);
+      },
+      slideChange: function () {
+        var slider = this;
+        if (slider.activeIndex === 0) {
+          menuButton.classList.add('cross');
+        } else {
+          menuButton.classList.remove('cross');
+        }
+      },
+    },
+  });
+</script>
+
+{% block mapMarker %}
+  <!--map setting -->
+  <script>
+    var markers = [];
+    var markerCluster= null;
+    // TODO: category 해당 restaurant 추출
+    function initMap() {
+// map options
+            var options = {
+                {% block mapZoom %}
+                center: {lat: 37.583929, lng: 127.059024},
+                zoom: 14,
+                {% endblock %}
+                mapTypeControl: false,
+                streetViewControl: false,
+                fullscreenControl: false,
+                maxZoom: 21,
+            };
+            // new map
+            var map = new google.maps.Map(document.getElementById('map'), options);
+            var image1 = {
+                url: '{% static 'base_app/images/marker1.png' %}',
+                scaledSize: new google.maps.Size(40, 40),
+                labelOrigin: new google.maps.Point(20, 11),
+            };
+            var image2 = {
+                url: '{% static 'base_app/images/marker2.png' %}',
+                scaledSize: new google.maps.Size(40, 40),
+                labelOrigin: new google.maps.Point(20, 13),
+            };
+            {% for restaurant in restaurants %}
+                {#if (markers.length <= 9 | map.getCameraPosition >= 16) {#}
+                    var marker = new google.maps.Marker({
+                        position: {{ restaurant.locate }},
+                        {% if restaurant.number %}
+                        label: {
+                            text: "{{ restaurant.number }}",
+                            fontSize: '12px',
+                            fontWeight: '900',
+                            color: 'rgb(129,129,255)',
+                        },
+                        {% endif %}
+                        map: map,
+                        icon: image2,
+                    });
+
+                    // 클릭 시 restaurant 소개 & 센터 오게
+                    var restaurant_introduction =
+                        '    <div style="display: flex; align-items: center; justify-content: space-between; width: 160px; height: 40px; margin-top: 5px; text-align: left; font-weight: 900">\n' +
+                        '      <div>{{ restaurant }}<span style="color: rgb(255,192,0)">({{ restaurant.average_star }})</span></div>\n' +
+                        '      <a href="{% url "base_app:restaurant" pk=restaurant.pk %}" style="all: unset; text-decoration: underline black">후기 / 정보</a>\n' +
+                        '    </div>';
+
+                    marker['infowindow'] = new google.maps.InfoWindow({
+                        content: restaurant_introduction,
+                    });
+
+                    marker.addListener('click', function() {
+                        map.setZoom(19);
+                        map.panTo(this.getPosition());
+                        this['infowindow'].open(map, this);
+                    });
+
+                    markers.push(marker);
+                    if (markers.length > 10) {
+                        marker.setVisible(false);
+                    }
+                {# }#}
+            {% endfor %}
+
+            /* Change markers on zoom */
+            google.maps.event.addListener(map, 'zoom_changed', function() {
+                var zoom = map.getZoom();
+                var len = markers.length;
+                function hideShow(len, x) {
+                    if (len >= x) {
+                        for (i = x; i < len; i++) {
+                            markers[i].setVisible(false);
+                        }
+                        for (i = 0; i < x; i++) {
+                            markers[i].setVisible();
+                        }
+                    }
+                }
+                // iterate over markers and call setVisible
+                if (zoom >= 19) {
+                    for (i = 0; i < len; i++) {
+                        markers[i].setVisible();
+                    }
+                } else if (zoom >= 18) {
+                    hideShow(len, 30)
+                } else if (zoom >= 17) {
+                    hideShow(len, 20)
+                } else if (zoom >= 16) {
+                    hideShow(len, 15)
+                } else if (zoom >= 15) {
+                    hideShow(len, 10)
+                } else {
+                    hideShow(len, 5)
+                }
+            });
+            {% block newMarker %}
+            {% endblock %}
+            {#var markerCluster = new MarkerClusterer(map, markers,#}
+            {#    {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});#}
+    }
+
+
+  </script>
+  <script src={{ GOOGLE_MAP_KEY }}
+  async defer></script>
+{#  <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">#}
+{#  </script>#}
+{% endblock %}
+
+
+
+<script>
+{% block start_js %}
+  // 시작 시 로고 띄우기
+$('.content_footer > a:nth-child(-n+2)').on('click', function () {
+  $('.bld').fadeIn(300);
+});
+
+$(document).ready(function() {
+    setTimeout(function () {
+        $('.bld').fadeOut(1500);
+        setTimeout(function () {
+            $('.bld').css('display', 'none');
+        }, 1500);
+    }, 500);
+});
+{% endblock %}
+
+  // 메뉴 클릭시
+var menu = $('.main_menu');
+var menuBar = $('.main_menu_bar');
+var blackBlock = $('.black_block');
+var logo = $('.logo');
+
+menu.on('click', function () {
+    menuBar.show();
+    blackBlock.show();
+});
+logo.on('click', menuHide);
+blackBlock.on('click', menuHide);
+function menuHide() {
+    menuBar.hide();
+    blackBlock.hide();
+}
+
+  // logout 클릭 시
+$('.logout').on('click', function () {
+    $('#logout').submit();
+});
+
+  // filter 버튼 클릭 시
+var filterButton = $('.filter');
+var filterPage = $('.filter_page');
+var blackBlock2 = $('.black_block2');
+var sort = $('.sort');
+var category = $('.category');
+
+filterButton.on('click', function () {
+    if (filterPage.css('display') === 'none') {
+        filterPage.fadeIn(500);
+        blackBlock2.fadeIn(500);
+    } else {
+        filterPage.fadeOut(500);
+        blackBlock2.fadeOut(500);
+    }
+});
+blackBlock2.on('click', function () {
+    filterPage.fadeOut(500);
+    blackBlock2.fadeOut(500);
+});
+
+ // filter 분류 작업
+var sortHtml = "";
+var categoryHtml = "";
+var categoryHtmls = [];
+
+sort.on('click', function () {
+    var a=0;
+    for (i=0; i<3; i++) {
+        if (sort[i].classList[1] === 'sort_selected') {
+            a=1;
+        }
+    }
+    if (a === 0) {
+        sortSelected($(this));
+        sortHtml = $(this).html()
+    } else {
+        sortUnselected(sort);
+        sortSelected($(this));
+        sortHtml = $(this).html()
+    }
+});
+function sortSelected(x) {
+    x.addClass('sort_selected')
+}
+function sortUnselected(x) {
+    x.removeClass('sort_selected')
+}
+
+category.on('click', function () {
+    if ('category_selected' !== this.classList[1]) {
+        categorySelected($(this));
+        categoryHtml = $(this)[0].innerText;
+        categoryHtmls.push(categoryHtml);
+    } else {
+        categoryUnselected($(this));
+        categoryHtml = $(this)[0].innerText;
+        var index = categoryHtmls.indexOf(categoryHtml);
+        categoryHtmls.splice(index, 1);
+    }
+});
+
+function categorySelected(x) {
+    x.addClass('category_selected')
+}
+function categoryUnselected(x) {
+    x.removeClass('category_selected')
+}
+
+ // filter 값 submit
+$('#filter_submit_btn').on('click', function () {
+    if (sortHtml) {
+        if (categoryHtml) {
+            $('#value1').val(sortHtml);
+            $('#value2').val(categoryHtmls);
+            $('#filter_submit').submit();
+        }
+    }
+});
+
+
+  // search 버튼 클릭 시
+var search = $('.search');
+var searchBox = $('.search_input');
+var searchText = $('.search_text');
+var whiteBlock = $('.white_block');
+
+search.on('click', function () {
+    filterPage.hide();
+    blackBlock2.hide();
+    searchBox.fadeIn(500);
+    whiteBlock.fadeIn(500);
+    search.on('click', function () {
+        if (searchText.val()) {
+            $("#search_submit").submit();
+        }
+    });
+});
+whiteBlock.on('click', function () {
+    searchBox.fadeOut(500);
+    whiteBlock.fadeOut(500);
+    searchText.val('')
+});
+
+// 스크롤바 움직일 때 제어
+var content = $('.content_mid');
+
+content.on('mouseenter', scrollShow);
+content.on('touchstart', scrollShow);
+content.on('touchmove', scrollShow);
+content.on('mouseleave', scrollHide);
+content.on('touchend', scrollHide);
+
+function scrollHide() {
+    setTimeout(function(){
+        $('html').addClass('hide-scrollbar');
+    }, 700);
+}
+function scrollShow() {
+    $('html').removeClass('hide-scrollbar');
+}
+
+var more = $('.content_footer > a:last-child');
+more.on('click', function () {
+    alert('아직 준비 중인 서비스 입니다.')
+})
+
+</script>
+{% block js %}
+{% endblock %}
+</body>
+</html>

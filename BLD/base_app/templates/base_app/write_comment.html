@@ -1,0 +1,131 @@
+{% extends "base_app/base.html" %}
+
+{% block start_html %}
+{% load static %}
+<div class="bld" style="display: none">
+  <img style="margin: 0 0 20px 5px" src="{% static 'base_app/images/logo.png' %}" width="150px">
+</div>
+{% endblock %}
+
+{% block head_left %}
+  <div class="main_menu">후기 작성</div>
+{% endblock %}
+
+{% block head_right23 %}
+{% endblock %}
+
+{% block head_right1 %}
+{% endblock %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'base_app/css/write_comment.css' %}">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+<div class="write_form_set">
+<form method='post' action='' enctype="multipart/form-data" id="comment" onsubmit="return validateForm()">
+  {% csrf_token %}
+  <div class="selected_restaurant">
+    <div class="selected_restaurant_title">식당:</div>
+    <select class="form-control" id="form-control1" name="restaurant">
+      <option value="{{ selected_restaurant.pk }}" selected>{{ selected_restaurant }}</option>
+      {% for restaurant in restaurants %}
+        <option value="{{ restaurant.pk }}">{{ restaurant }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="eaten_dish">
+    <div class="eaten_dish_title">음식:</div>
+    <input type="text" class="form-control" id="form-control2"
+           placeholder="먹은 음식 (메뉴판 이름으로)" required name="dish_eaten"/>
+  </div>
+  <div class="star">
+    <div class="taste_star">
+      <select class="form-control star_number" id="star_number1" name="taste_star">
+        <option selected>맛</option>
+        <option value="4">A(대단)</option>
+        <option value="3">B(만족)</option>
+        <option value="2">C(무난)</option>
+        <option value="1">D(별로)</option>
+        <option value="0">F(심각)</option>
+      </select>
+    </div>
+    <div class="price_star">
+      <select class="form-control star_number" id="star_number2" name="price_star">
+        <option selected>가격</option>
+        <option value="4">A(대단)</option>
+        <option value="3">B(만족)</option>
+        <option value="2">C(무난)</option>
+        <option value="1">D(별로)</option>
+        <option value="0">F(심각)</option>
+      </select>
+    </div>
+    <div class="clean_star">
+      <select class="form-control star_number" id="star_number3" name="clean_star">
+        <option selected>청결</option>
+        <option value="4">A(대단)</option>
+        <option value="3">B(만족)</option>
+        <option value="2">C(무난)</option>
+        <option value="1">D(별로)</option>
+        <option value="0">F(심각)</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group" id="form-group1">
+    <textarea class="form-control" rows="7" id="form-control3"
+              placeholder="후기 (150자 이내, 작성 필수X)" name="content"></textarea>
+  </div>
+  <div class="form-group" id="form-group2">
+    <input type="file" accept="image/*" id="exampleInputFile" name="food_image">
+  </div>
+  <input type="hidden" name="try_again">
+  <button type="submit" id="comment_submit">작성완료</button>
+</form>
+</div>
+{% endblock %}
+
+
+{% block footer %}
+<a href="{% url "base_app:all_comments" %}"><img src="{% static 'base_app/images/comment1.png' %}" width="26"></a>
+<a href="{% url "base_app:base" %}"><img src="{% static 'base_app/images/restaurant1.png' %}" width="27"></a>
+<a href="#"><img src="{% static 'base_app/images/write2.png' %}" width="27"></a>
+<a href="#"><img src="{% static 'base_app/images/gear1.png' %}" width="27"></a>
+{% endblock %}
+
+{% block mapMarker %}
+{% endblock %}
+
+{% block js %}
+<script>
+// 폼 입력 유효성 검증
+var form1 = $('#star_number1');
+var form2 = $('#star_number2');
+var form3 = $('#star_number3');
+var commentContent = $('#form-control3');
+var err = 0;
+
+function validate(x) {
+    if (x.prop('selectedIndex') === 0) {
+        alert("<"+ x.val() + ">" + "을 평가해주셔야합니다.");
+        err++
+    }
+}
+function over150() {
+    if (commentContent.val().length > 155) {
+        alert("후기를 150자 이내로 적어주세요(현재"+commentContent.val().length+"글자)");
+        err++
+    }
+}
+function validateForm() {
+    validate(form1);
+    validate(form2);
+    validate(form3);
+    over150();
+    if (err > 0) {
+        return false;
+    }
+}
+</script>
+{% endblock %}

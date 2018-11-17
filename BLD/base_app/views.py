@@ -42,7 +42,8 @@ def base(request):
         return x.comment_set.all().aggregate(Avg(y))[y + '__avg']
 
     # GOOGLE MAP SECRET_KEY
-    secret_file = os.path.abspath('.\\secrets.json')  # secrets.json 파일 위치를 명시
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    secret_file = os.path.join(BASE_DIR, './secrets.json')  # secrets.json 파일 위치를 명시
     with open(secret_file) as f:
         secrets = json.loads(f.read())
 
@@ -198,7 +199,8 @@ def base(request):
 
 
 def restaurant(request, pk):
-    secret_file = os.path.abspath('.\\secrets.json')  # secrets.json 파일 위치를 명시
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    secret_file = os.path.join(BASE_DIR, './secrets.json')  # secrets.json 파일 위치를 명시
     with open(secret_file) as f:
         secrets = json.loads(f.read())
 

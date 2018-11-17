@@ -7,13 +7,13 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from .tokens import account_activation_token
 from django.contrib.auth.models import User
+from django.contrib import messages
 
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.core.mail import EmailMessage
-
 
 
 def login(request):
@@ -67,6 +67,14 @@ def signup(request):
                 '학교 이메일</a><span>로 인증 링크가 전송되었습니다.</span>'
                 '</div>'
             )
+        else:
+            alert_message = "이미 존재하는 닉네임입니다."
+            form = SignupForm()
+            ctx = {
+                'form': form,
+                'alert_message': alert_message,
+            }
+            return render(request, 'accounts/signup.html', ctx)
     else:
         form = SignupForm()
         ctx = {'form': form}

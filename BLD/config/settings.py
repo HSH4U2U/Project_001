@@ -36,6 +36,7 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     '.elasticbeanstalk.com',
+    'honux.pythonanywhere.com',
 ]
 
 # Application definition
@@ -52,14 +53,11 @@ INSTALLED_APPS = [
     'imagekit',
 ]
 
-EMAIL_HOST_USER = get_secret("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = get_secret("EMAIL_HOST_PASSWORD")
-
 from .email_info import EMAIL_USE_TLS, EMAIL_HOST, EMAIL_PORT
 EMAIL_USE_TLS = EMAIL_USE_TLS
 EMAIL_HOST = EMAIL_HOST
-EMAIL_HOST_USER = EMAIL_HOST_USER
-EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD
+EMAIL_HOST_USER = get_secret("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = get_secret("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = EMAIL_PORT
 
 

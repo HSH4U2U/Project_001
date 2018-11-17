@@ -6,13 +6,22 @@ from django.core.exceptions import ValidationError
 
 def validate_school_email(value):
     if not "@uos.ac.kr" in value:
-        raise ValidationError("서울시립대학교 이메일 형식만 아이디로 사용가능합니다.")
+        raise forms.ValidationError("서울시립대학교 이메일 형식만 아이디로 사용가능합니다.")
     else:
         return value
 
+
+def unique_nickname(value):
+    for user in User.objects.all():
+        print(user.last_name)
+        if value == user.last_name:
+            raise forms.ValidationError("이미 존재하는 아이디 입니다.")
+    return value
+
+
 class SignupForm(UserCreationForm):
-    username = forms.EmailField(validators=[validate_school_email])
-    nickname = forms.CharField(max_length=8, required=True)
+    username = forms.EmailField(required=True, validators=[validate_school_email])
+    nickname = forms.CharField(max_length=8, required=True, validators=[unique_nickname])
 
     class Meta:
         model = User

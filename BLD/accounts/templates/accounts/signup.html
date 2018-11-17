@@ -39,7 +39,9 @@
   integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
   crossorigin="anonymous"></script>
 <script>
-  // TODO: 이메일 형식에 맞아야만 가입 가능하게
+{% if alert_message %}
+    alert(alert_message);
+{% endif %}
 </script>
 
 {% endblock %}

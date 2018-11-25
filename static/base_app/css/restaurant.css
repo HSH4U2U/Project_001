@@ -1,0 +1,83 @@
+.comment_list {
+  font-size: 12px;
+  overflow-y: scroll;
+}
+
+.comment {
+  margin-bottom: 25px;
+  padding: 10px 10px 0 10px;
+  text-align: left;
+  background-color: white;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1), 0 3px 10px 0 rgba(0, 0, 0, 0.09);
+}
+
+.profile_set {
+  display: flex;
+  align-items: center;
+}
+
+.profile_content {
+  margin-left: 5px;
+}
+
+.profile_nickname {
+  font-weight: bold;
+}
+
+.upload_time {
+  font-size: 10px;
+  font-weight: lighter;
+  margin-top: 2px;
+}
+
+.upload_time span:first-child{
+  margin-right: 1px;
+}
+
+.comment_restaurant {
+  margin-left: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: right;
+}
+
+.comment_restaurant a {
+  color: darkred;
+  width: 100%;
+}
+
+.comment_restaurant span {
+  text-decoration: underline;
+}
+
+.comment_content {
+  margin: 20px 0 30px 0;
+}
+
+.grade_set {
+  margin-bottom: 10px;
+  float: right;
+  vertical-align: center;
+}
+
+.grade_set > span {
+  margin-right: 5px;
+}
+
+.clean {
+  margin-right: 5px;
+}
+
+.comment_images {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.comment_image {
+  display: inline-block;
+  width: calc(100% + 20px);
+}

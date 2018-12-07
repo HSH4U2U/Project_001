@@ -33,7 +33,12 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
+<<<<<<< HEAD
     'honux.pythonanywhere.com',
+=======
+    '.elasticbeanstalk.com',
+    'thisisforuos.pythonanywhere.com',
+>>>>>>> c13845c9271a2516aa437f4fb7441c87c59934d6
 ]
 
 # Application definition
@@ -139,8 +144,9 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = '/home/thisisforuos/Project_001/BLD/assets'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'config', 'static')
+    os.path.join(BASE_DIR, 'static')
 ]
 
 MEDIA_URL = '/media/'

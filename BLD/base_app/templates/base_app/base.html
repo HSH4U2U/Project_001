@@ -159,7 +159,7 @@
       <div class="content_footer">
         {% block footer %}
         <a href="{% url "base_app:all_comments" %}"><img src="{% static 'base_app/images/comment1.png' %}" width="26"></a>
-        <a href="#"><img src="{% static 'base_app/images/restaurant2.png' %}" width="27"></a>
+        <a href="{% url "base_app:base" %}"><img src="{% static 'base_app/images/restaurant2.png' %}" width="27"></a>
         {% if user.is_authenticated %}
           <a href="{% url "base_app:write_comment" pk=1 %}"><img src="{% static 'base_app/images/write1.png' %}" width="27"></a>
         {% else %}
@@ -359,10 +359,6 @@
 <script>
 {% block start_js %}
   // 시작 시 로고 띄우기
-$('.content_footer > a:nth-child(-n+2)').on('click', function () {
-  $('.bld').fadeIn(300);
-});
-
 $(document).ready(function() {
     setTimeout(function () {
         $('.bld').fadeOut(1500);
@@ -522,6 +518,27 @@ more.on('click', function () {
     alert('아직 준비 중인 서비스 입니다.')
 })
 
+// 좋아요 기능 구현
+  $(".like").click(function(){
+    var pk = $(this).attr('name');
+    $.ajax({ // .like 버튼을 클릭하면 <새로고침> 없이 ajax로 서버와 통신하겠다.
+      type: "POST", // 데이터를 전송하는 방법을 지정
+      url: "{% url 'base_app:comment_like' %}", // 통신할 url을 지정
+      data: {'pk': pk, 'csrfmiddlewaretoken': '{{ csrf_token }}'}, // 서버로 데이터 전송시 옵션
+      dataType: "json", // 서버측에서 전송한 데이터를 어떤 형식의 데이터로서 해석할 것인가를 지정, 없으면 알아서 판단
+      // 서버측에서 전송한 Response 데이터 형식 (json)
+      // {'likes_count': post.like_count, 'message': message }
+      success: function(response){ // 통신 성공시 - 동적으로 좋아요 갯수 변경, 유저 목록 변경
+        alert(response.message);
+        $("#count-"+pk).html(" " + response.like_count);
+      },
+      error: function(request, status, error){ // 통신 실패시 - 로그인 페이지 리다이렉트
+        alert("로그인이 필요합니다.");
+        window.location.replace("/accounts/login/");
+        {#alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);#}
+      },
+    });
+  })
 </script>
 {% block js %}
 {% endblock %}
